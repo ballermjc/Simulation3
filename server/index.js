@@ -3,10 +3,11 @@ const express           = require('express'),
       authController    = require('./controllers/auth');
       bodyParser        = require('body-parser'),
       cors              = require('cors'),
+      friendsController = require('./controllers/friend');
       massive           = require('massive'),
       passport          = require('passport');
       path              = require('path'),
-      port              = 3000;
+      port              = 3001;
       session           = require('express-session'),
       checkForSession   = require('./middlewares/checkForSession'),
       strategy          = require('./strategy');
@@ -27,13 +28,34 @@ app.use(passport.session());
 passport.use(strategy);
 
 
-passport.serializeUser(function(user, done) {
-    done(null, {id: user.id, firstName: user.firstName || '', lastName: user.lastName || '', picture: 'https://robohash.org/me'});
+passport.serializeUser((user, done) => {
+    const { id, first, last } = user;
+    console.log(user);
+    return {
+        id: id || '',
+        first: first || '',
+        last: last || '',
+        picture: 'https://robohash.org/me'
+    }
 });
 
-passport.deserializeUser(function(obj, done) {
-    authController.register;
-    done(null.obj);
+passport.deserializeUser(function(user, done) {
+    // authController.register;
+    const { id, first, last } = user;
+    db.users.find(id, (err, user) => {
+        if (err) {
+            throw new Error(err);
+        }
+        if (user) {
+            return done(null, user);
+        }
+        db.users.insert({id, first, last}, (err, res) => {
+            if (err) {
+                throw new Error(err)
+            }
+            done(null, user)
+        });
+    });
 });
 
 app.use(express.static(path.resolve(__dirname, "client", "build")));
@@ -50,7 +72,7 @@ app.get('/api/auth/login', passport.authenticate('auth0', {
 }));
 
 app.get('/api/auth/setUser', (req, res) => {
-    authController.login;
+    // authController.login;
     res.redirect('/dashboard');
 });
 
@@ -64,6 +86,12 @@ app.get('/api/auth/authenticated', (req, res) => {
 });
 
 app.post('/api/auth/logout', authController.logout);
+
+
+//Friend Routes//
+app.get('/api/friend/list', friendsController.getFriends);
+app.post('/api/friend/add', friendsController.postFriends);
+app.post('/api/friend/remove', friendsController.removeFriends);
 
 
 app.listen(port, console.log(`All the homies are on port ${port}`));

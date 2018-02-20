@@ -1,8 +1,14 @@
 module.exports = function(req, res, next) {
-    const { session } = req;
-
-    if(!session) {
-        session.user = {username: '', id: -1};
+    const { session, sessionID } = req;
+    let id = sessionID;
+    console.log(id);
+    console.log(session.user);
+    console.log(session);
+    if(!session.user) {
+        session.user = {
+            username: '',
+            id: id
+        }
     }
     next();
 };
