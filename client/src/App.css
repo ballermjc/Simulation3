@@ -45,7 +45,7 @@
   border: none;
   color: white;
   border-radius: 1px;
-  background-image: radial-gradient(circle at 46%, #737373, #403d39);
+  background-image: radial-gradient(circle at 50%-46%, #737373, #403d39);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -53,17 +53,31 @@
   display: flex;
   align-items: center;
   align-content: center;
-  justify-content: space-around;
+  justify-content: center;
   width: 100vw;
   background-color: #ff9770;
   color: white;
 }
 
-.DashboardView {
-
+.NavLeft, .NavCenter, .NavRight {
+  width: 33.3%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
 }
 
-.DashboardUpper {
+.NavChild {
+  margin-left: 15px;
+}
+
+.DashboardView, .ProfileView, .SearchView {
+ height: 100vh;
+ border-radius: 8px;
+ background-image: linear-gradient( 128deg, rgba(64, 61, 57, 0.1), rgba(255,255,255,0.2));
+ box-shadow: 0 14px 28px 0 rgba(0, 0, 0, 0.25), 0 10px 10px 0 rgba(0, 0, 0, 0.26);
+}
+
+.DashboardUpper, .ProfileUpper {
   display: flex;
   align-items: center;
   align-content: center;
@@ -72,15 +86,109 @@
   margin-top: 20px;
 }
 
+.ProfileUpper {
+  margin-left: 15%;
+  margin-right: 5%;
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  align-content: space-around;
+  height: 130px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
+}
+
+.ProfileUpperLeft {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+.ProfileUpperLeft img {
+  height: 100px;
+  border: 3px solid #ff9770;
+  margin: 10px;
+}
+
+.ProfileUpperRight {
+  margin-right: 10px;
+  display: flex;
+}
+
+.UpdateButton {
+  padding: 10px 30px;
+  letter-spacing: 0.8px;
+  margin: 7px;
+  width: 75%;
+  font-size: 11px;
+  border: none;
+  color: white;
+  border-radius: 1px;
+  background-image: radial-gradient(circle at 50%-46%, #737373, #403d39);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.CancelButton {
+  padding: 10px 30px;
+  letter-spacing: 0.8px;
+  margin: 7px;
+  width: 75%;
+  font-size: 11px;
+  color: black;
+  border-radius: 1px;
+  background-image: radial-gradient(circle at 50% 0, #ffffff, #f1eceb);
+  border: solid 1px #ccc3c3;
+}
+
+.ProfileLower {
+  margin-top: 25px;
+  margin-left: 15%;
+  margin-right: 5%;
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  align-content: space-around;
+  height: 300px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
+}
+
+.ProfileLowerLeft {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  align-content: flex-start;
+}
+
+.ProfileLowerLeft label , .ProfileLowerRight label {
+  text-align: left;
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.ProfileLowerRight {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  justify-content: center;
+}
+
 .DashboardLeft {
   margin-left: 25%;
   margin-right: 5%;
   width: 40%;
-  border: 2px black solid;
+  
   display: flex;
   align-items: center;
   justify-content: space-around;
   height: 130px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
 }
 
 .DashLeftLeft img {
@@ -90,9 +198,13 @@
 }
 
 .DashboardRight {
+  text-align: left;
+  padding: 0 10px;
   width: 60%;
-  border: 2px black solid;
   height: 130px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
 }
 
 .DashboardLeftRight {
@@ -100,4 +212,130 @@
   text-align: left;
   align-content: flex-start;
   height: 100px;
+}
+
+.DashboardLower {
+  margin-top: 20px;
+  margin-left: 20%;
+  margin-bottom: 20px;
+  width: 60%;
+  height: 600px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
+}
+
+.Recommended {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.DashTitle {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.DashRec {
+  display: flex;
+  width: 50%;
+  margin-left: 10px;
+}
+
+.DashSort {
+  display: flex;
+  margin-left: auto;
+  align-items: baseline;
+  margin-right: 10px;
+}
+
+.DashSort select {
+  margin-left: 10px;
+  height: 32%;
+}
+
+.SearchContent {
+  width: 70%;
+  margin-left: 15%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
+}
+
+.SearchUpper {
+  display: flex;
+  margin-left: 15px;
+  align-items: baseline;
+}
+
+.SearchUpper select, .SearchUpper input, .SearchUpper button {
+  margin-top: 30px;
+  margin-right: 10px;
+}
+
+.SearchLower {
+  display: flex;
+}
+
+.SearchLowerLeft, .SearchLowerRight {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.SearchPanel {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.2);
+}
+
+.SearchPanel img {
+  height: 100px;
+}
+
+.SearchButton {
+  padding: 7px 30px;
+  letter-spacing: 0.8px;
+  margin: 7px;
+  width: 15%;
+  font-size: 11px;
+  border: none;
+  color: white;
+  border-radius: 1px;
+  background-image: radial-gradient(circle at 50%-46%, #737373, #403d39);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ResetButton {
+  padding: 7px 30px;
+  letter-spacing: 0.8px;
+  margin: 7px;
+  width: 15%;
+  font-size: 11px;
+  color: black;
+  border-radius: 1px;
+  background-image: radial-gradient(circle at 50% 0, #ffffff, #f1eceb);
+  border: solid 1px #ccc3c3;
+}
+
+.SearchPanel h3 {
+  width: 20%;
+}
+
+.AddFriendButton {
+  padding: 7px 20px;
+  letter-spacing: 0.8px;
+  margin: 7px 0px 7px 45px;
+  font-size: 11px;
+  color: white;
+  border: none;
+  border-radius: 1px;
+  background-image: radial-gradient(circle at 50%-46%, #ff9770, #ff7a6e);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }

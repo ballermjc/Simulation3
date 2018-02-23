@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from '../../logo.png';
 
+
 export default class AuthView extends Component {
     auth() {
         window.open('http://localhost:3001/api/auth/login');
