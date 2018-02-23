@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import logo from '../../logo.png';
-import axios from 'axios';
 
 export default class AuthView extends Component {
     auth() {
-        axios.get('/api/auth/login')
-            .then((res) => {
-                console.log('Hit Endpoint')
-            })
-            .catch((err) => console.log(err));
+        window.open('http://localhost:3001/api/auth/login');
     }
 
     render() {
@@ -21,7 +16,7 @@ export default class AuthView extends Component {
                     <div className="Helo">
                         <h1>Helo</h1>
                     </div>
-                    <button className="AuthButton" onClick={() => this.auth()}><p>Login / Register</p></button>
+                    <button className="AuthButton" onClick={() => this.auth()}><a href='https://localhost:3001/api/auth/login'><p>Login / Register</p></a></button>
                 </div>
                 
             </div>

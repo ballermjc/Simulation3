@@ -14,6 +14,10 @@ const express           = require('express'),
 
 massive(process.env.CONNECTION_STRING).then(dbInstance => app.set('db', dbInstance));
 
+var corsOptions = {
+    origin: 'http://localhost:3000'
+}
+
 require('dotenv').config();
 app.use(cors());
 app.use(bodyParser.json());
@@ -22,41 +26,13 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-app.use(checkForSession);
+// app.use(checkForSession);
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(strategy);
 
 
-passport.serializeUser((user, done) => {
-    const { id, first, last } = user;
-    console.log(user);
-    return {
-        id: id || '',
-        first: first || '',
-        last: last || '',
-        picture: 'https://robohash.org/me'
-    }
-});
 
-passport.deserializeUser(function(user, done) {
-    // authController.register;
-    const { id, first, last } = user;
-    db.users.find(id, (err, user) => {
-        if (err) {
-            throw new Error(err);
-        }
-        if (user) {
-            return done(null, user);
-        }
-        db.users.insert({id, first, last}, (err, res) => {
-            if (err) {
-                throw new Error(err)
-            }
-            done(null, user)
-        });
-    });
-});
 
 app.use(express.static(path.resolve(__dirname, "client", "build")));
 app.get("/", (req, res) => {
@@ -64,28 +40,41 @@ app.get("/", (req, res) => {
 });
 
 
+passport.serializeUser((user,done) => {
+    console.log(user)
+    done(null,
+        {
+           id: user.id,
+           firstName: user.first || '',
+           lastName: user.last || '',
+           picture: 'https://robohash.org/me'
+        });
+});
 
-app.get('/api/auth/login', passport.authenticate('auth0', {
-    successRedirect: '/api/auth/setUser',
-    failureRedirect: '/api/auth/login',
-    failureFlash: true
+passport.deserializeUser((obj,done) => {
+    done(null,obj);
+})
+
+//Authorization Endpoints
+app.get( '/api/auth/login',
+    passport.authenticate('auth0', { 
+        successRedirect: '/api/auth/setUser',
+        failureRedirect: '/profile', 
+        failureFlash: true 
 }));
 
-app.get('/api/auth/setUser', (req, res) => {
-    // authController.login;
-    res.redirect('/dashboard');
+app.get('/api/auth/setUser', passport.authenticate('auth0'), (req,res) => {
+    console.log(req.session.passport.user);//this gives me what was set on the middleware for user and id
+    res.redirect('http://localhost:3000/dashboard')//this works
 });
 
-app.get('/api/auth/authenticated', (req, res) => {
-    const { user } = req.session;
-    if(user) {
-        res.status(200).send(user);
+app.get('/api/auth/authenticated', (req,res) => {
+    if(req.session.passport.user){
+        res.status(200).send(req.session.passport.user)
     } else {
-        res.status(403);
+        res.status(403)
     }
 });
-
-app.post('/api/auth/logout', authController.logout);
 
 
 //Friend Routes//
