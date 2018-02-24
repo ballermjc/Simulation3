@@ -16,13 +16,20 @@ const express           = require('express'),
       const config = require(`${__dirname}/config.js`);
       const { domain, clientID, clientSecret } = config;
 
-massive(process.env.CONNECTION_STRING).then(dbInstance => app.set('db', dbInstance));
+      require('dotenv').config();
+
+massive(process.env.CONNECTION_STRING).then(dbInstance => {
+    console.log('connected');
+    app.set('db', dbInstance)
+}).catch(err => {
+    console.log('ERROR', err);
+});
 
 var corsOptions = {
     origin: 'http://localhost:3000'
 }
 
-require('dotenv').config();
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(session({
@@ -40,20 +47,21 @@ passport.use(new Auth0Strategy({
     callbackURL:  '/api/auth/setUser'
    },
    function(accessToken, refreshToken, extraParams, profile, done) {
-     const dbInstance = app.get('db');
-     dbInstance.read_user([ profile.user_id ])
-       .then(user => {
-         if(user) {
-           return done( null, { id: user_id });
-         } else {
-           dbInstance.create_user([profile.user_id, 'https://robohash.org/me'])
-             .then(user => {
-               return done(null, { id: user_id });
-             })
-         } 
-       })
- 
-           console.log(profile);
+    //  const dbInstance = app.get('db');
+    //  dbInstance.read_user([ profile.user_id ])
+    //    .then(user => {
+    //      if(user.userid) {
+    //          console.log('DB User: ', user);
+    //        return done( null, profile);
+    //      } else {
+    //        dbInstance.create_user([profile.user_id, 'https://robohash.org/me'])
+    //          .then(user => {
+    //              console.log('Created User', user);
+    //            return done(null, profile);
+    //          })
+    //      } 
+    //    })
+    // dbInstance.create_user([profile.user_id, 'https://robohash.org/me']);
            done(null, profile);
    }));
 
@@ -67,7 +75,6 @@ app.get("/", (req, res) => {
 
 
 passport.serializeUser((user,done) => {
-    console.log(user)
     done(null,
         {
            id: user.id,
@@ -78,6 +85,7 @@ passport.serializeUser((user,done) => {
 });
 
 passport.deserializeUser((obj,done) => {
+     
     done(null,obj);
 })
 
@@ -90,7 +98,24 @@ app.get( '/api/auth/login',
 }));
 
 app.get('/api/auth/setUser', passport.authenticate('auth0'), (req,res) => {
-    console.log('Passport User: ',req.session.passport.user);//this gives me what was set on the middleware for user and id
+    console.log('Passport User: ',req.session.passport.user);//
+    let passportUser = req.session.passport.user;
+    const dbInstance = app.get('db');
+     dbInstance.read_user([ passportUser.id ])
+       .then(user => {
+           console.log('Promise: ',user);
+           if(user.length && user[0].userid) {
+             console.log('DB User already exists: ', user);
+           return done( null, profile);
+         } else {
+           dbInstance.create_user([ passportUser.id, 'https://robohash.org/me'])
+             .then(user => {
+                 console.log('Created User in DB: ', user);
+               return done(null, profile);
+             })
+         } 
+       })
+
     res.redirect('http://localhost:3000/dashboard')//this works
 });
 
