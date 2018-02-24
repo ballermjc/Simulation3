@@ -2,9 +2,53 @@ import React, { Component } from 'react';
 import home from '../../home.png';
 import search from '../../search.png';
 import {Link} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { updateFirstName, updateLastName, updateGender, updateHairColor, updateEyeColor, updateHobby, updateBirthdayDay, updateBirthdayMonth, updateBirthdayYear } from '../../Reducer/reducer';
+import axios from 'axios';
 
-export default class Profile extends Component {
+class Profile extends Component {
+
+    componentWillMount() {
+        axios.get('/api/user')
+        .then(res => {
+            console.log(res.data);
+            const { firstname, lastname, gender, haircolor, eyecolor, hobby, birthdayday, birthdaymonth, birthdayyear } = res.data;
+            this.props.updateFirstName(firstname);
+            this.props.updateLastName(lastname);
+            this.props.updateGender(gender);
+            this.props.updateHairColor(haircolor);
+            this.props.updateEyeColor(eyecolor);
+            this.props.updateHobby(hobby);
+            this.props.updateBirthdayDay(birthdayday);
+            this.props.updateBirthdayMonth(birthdaymonth);
+            this.props.updateBirthdayYear(birthdayyear);
+        })
+        .catch(err => console.log(err));
+    }
+
+    updateProfile() {
+        const body = {
+            firstName: this.props.firstName,
+            lastName: this.props.lastName,
+            gender: this.props.gender,
+            hairColor: this.props.hairColor,
+            eyeColor: this.props.eyeColor,
+            hobby: this.props.hobby,
+            birthdayDay: this.props.birthdayDay,
+            birthdayMonth: this.props.birthdayMonth,
+            birthdayYear: this.props.birthdayYear
+        }
+
+        axios.patch('/api/user/patch', body)
+            .then(res => {
+                console.log(res.data);
+                // update this component
+            })
+            .catch(err => console.log(err));
+    }
+
     render() {
+        const { updateFirstName, updateLastName, updateGender, updateHairColor, updateEyeColor, updateHobby, updateBirthdayDay, updateBirthdayMonth, updateBirthdayYear } = this.props;
         return (
             <div className="ProfileView">
                 <div className="NavBar">
@@ -29,11 +73,11 @@ export default class Profile extends Component {
                 <div className="ProfileUpper">
                     <div className="ProfileUpperLeft">
                         <img src="https://robohash.org/me" alt="avatar"/>
-                        <h3>James Lemire</h3>
+                        <h3>{this.props.firstName} {this.props.lastName}</h3>
                     </div>
                     
                     <div className="ProfileUpperRight">
-                        <button className="UpdateButton">Update</button>
+                        <button className="UpdateButton" onClick={() => this.updateProfile()}>Update</button>
                         <button className="CancelButton">Cancel</button>
                     </div>
                 </div>
@@ -41,17 +85,17 @@ export default class Profile extends Component {
                 <div className="ProfileLower">
                     <div className="ProfileLowerLeft">
                         <label htmlFor="firstName">First Name</label>
-                        <input type="text" name="firstName" id="firstName" placeholder="James"/>
+                        <input type="text" name="firstName" value={this.props.firstName} id="firstName" onChange={(event) => updateFirstName(event.target.value)}/>
                         <label htmlFor="lastName">Last Name</label>
-                        <input type="text" name="lastName" id="lastName" placeholder="Lemire"/>
+                        <input type="text" name="lastName" value={this.props.lastName} id="lastName" onChange={(event) => updateLastName(event.target.value)}/>
                         <label htmlFor="gender">Gender</label>
-                        <select name="gender" id="gender">
+                        <select name="gender" id="gender" value={this.props.gender} onChange={(event) => updateGender(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
                         <label htmlFor="hairColor">Hair Color</label>
-                        <select name="hairColor" id="hairColor">
+                        <select name="hairColor" id="hairColor" value={this.props.hairColor} onChange={(event) => updateHairColor(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="Brown">Brown</option>
                             <option value="Blonde">Blonde</option>
@@ -59,7 +103,7 @@ export default class Profile extends Component {
                             <option value="Gray">Gray</option>
                         </select>
                         <label htmlFor="eyeColor">Eye Color</label>
-                        <select name="eyeColor" id="eyeColor">
+                        <select name="eyeColor" id="eyeColor" value={this.props.eyeColor} onChange={(event) => updateEyeColor(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="Blue">Blue</option>
                             <option value="Brown">Brown</option>
@@ -71,7 +115,7 @@ export default class Profile extends Component {
 
                     <div className="ProfileLowerRight">
                         <label htmlFor="hobby">Hobby</label>
-                        <select name="hobby" id="hobby">
+                        <select name="hobby" id="hobby" value={this.props.hobby} onChange={(event) => updateHobby(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="Video Games">Video Games</option>
                             <option value="Hiking">Hiking</option>
@@ -79,7 +123,7 @@ export default class Profile extends Component {
                             <option value="Rafting">Rafting</option>
                         </select>
                         <label htmlFor="birthDay">Birthday Day</label>
-                        <select name="birthDay" id="birthDay">
+                        <select name="birthDay" id="birthDay" value={this.props.birthdayDay} onChange={(event) => updateBirthdayDay(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -114,7 +158,7 @@ export default class Profile extends Component {
                             <option value="31">31</option>
                         </select>
                         <label htmlFor="birthMonth">Birthday Month</label>
-                        <select name="birthMonth" id="birthMonth">
+                        <select name="birthMonth" id="birthMonth" value={this.props.birthdayMonth} onChange={(event) => updateBirthdayMonth(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="January">January</option>
                             <option value="February">February</option>
@@ -130,7 +174,7 @@ export default class Profile extends Component {
                             <option value="December">December</option>
                         </select>
                         <label htmlFor="birthYear">Birthday Year</label>
-                        <select name="birthYear" id="birthYear">
+                        <select name="birthYear" id="birthYear" value={this.props.birthdayYear} onChange={(event) => updateBirthdayYear(event.target.value)}>
                             <option>-- Select --</option>
                             <option value="2006">2006</option>
                             <option value="2005">2005</option>
@@ -178,3 +222,20 @@ export default class Profile extends Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    const { firstName, lastName, gender, hairColor, eyeColor, hobby, birthdayDay, birthdayMonth, birthdayYear } = state;
+    return {
+        firstName, 
+        lastName,
+        gender,
+        hairColor, 
+        eyeColor, 
+        hobby,
+        birthdayDay,
+        birthdayMonth,
+        birthdayYear
+    };
+}
+
+export default connect(mapStateToProps, { updateFirstName, updateLastName, updateGender, updateHairColor, updateEyeColor, updateHobby, updateBirthdayDay, updateBirthdayMonth, updateBirthdayYear })(Profile);

@@ -127,6 +127,32 @@ app.get('/api/auth/authenticated', (req,res) => {
     }
 });
 
+app.patch('/api/user/patch', (req, res) => {
+    const dbInstance = req.app.get('db');
+    const { session } = req;
+    const { firstName, lastName, gender, hairColor, eyeColor, hobby, birthdayDay, birthdayMonth, birthdayYear } = req.body;
+    dbInstance.update_user([session.passport.user.id, firstName, lastName, gender, hairColor, eyeColor, hobby, birthdayDay, birthdayMonth, birthdayYear ])
+        .then(() => {
+            dbInstance.read_user([session.passport.user.id])
+                .then(user => {
+                    console.log(user[0]);
+                    res.status(200).send(user[0]);
+                })
+                .catch(err => console.log(err));
+        })
+        .catch((err) => console.log(err));
+})
+
+app.get('/api/user', (req, res) => {
+    const dbInstance = req.app.get('db');
+    const { session } = req;
+    dbInstance.read_user([session.passport.user.id])
+        .then(user => {
+            console.log(user[0]);
+            res.status(200).send(user[0]);
+        })
+        .catch(err => console.log(err));
+})
 
 //Friend Routes//
 app.get('/api/friend/list', friendsController.getFriends);

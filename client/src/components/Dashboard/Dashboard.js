@@ -2,8 +2,24 @@ import React, { Component } from 'react';
 import home from '../../home.png';
 import search from '../../search.png';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {updateFirstName, updateLastName} from '../../Reducer/reducer';
+import axios from 'axios';
 
-export default class Dashboard extends Component {
+
+class Dashboard extends Component {
+
+    componentWillMount() {
+        axios.get('/api/user')
+        .then(res => {
+            console.log(res.data);
+            const { firstname, lastname } = res.data;
+            this.props.updateFirstName(firstname);
+            this.props.updateLastName(lastname);
+        })
+        .catch(err => console.log(err));
+    }
+
     render() {
         return (
             <div className="DashboardView">
@@ -32,7 +48,7 @@ export default class Dashboard extends Component {
                             <img src="https://robohash.org/me" alt="avatar"/>
                         </div>
                         <div className="DashLeftRight">
-                            <h3>James Lemire</h3>
+                            <h3>{this.props.firstName} {this.props.lastName}</h3>
                             <Link to='/profile'>
                             <button>Edit Profile</button>
                             </Link>
@@ -72,3 +88,13 @@ export default class Dashboard extends Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    const { firstName, lastName } = state;
+    return {
+        firstName,
+        lastName
+    }
+} 
+
+export default connect(mapStateToProps, { updateFirstName, updateLastName })(Dashboard);
