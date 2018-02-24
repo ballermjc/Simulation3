@@ -3,9 +3,6 @@ import logo from '../../logo.png';
 
 
 export default class AuthView extends Component {
-    auth() {
-        window.open('http://localhost:3001/api/auth/login');
-    }
 
     render() {
         return(
@@ -17,7 +14,9 @@ export default class AuthView extends Component {
                     <div className="Helo">
                         <h1>Helo</h1>
                     </div>
-                    <button className="AuthButton" onClick={() => this.auth()}><a href='https://localhost:3001/api/auth/login'><p>Login / Register</p></a></button>
+                    <div className="AuthButton">
+                        <a href='http://localhost:3001/api/auth/login'>Login / Register</a>
+                    </div>
                 </div>
                 
             </div>

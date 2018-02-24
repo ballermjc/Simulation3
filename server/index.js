@@ -12,6 +12,10 @@ const express           = require('express'),
       checkForSession   = require('./middlewares/checkForSession'),
       strategy          = require('./strategy');
 
+      const Auth0Strategy = require('passport-auth0');
+      const config = require(`${__dirname}/config.js`);
+      const { domain, clientID, clientSecret } = config;
+
 massive(process.env.CONNECTION_STRING).then(dbInstance => app.set('db', dbInstance));
 
 var corsOptions = {
@@ -29,7 +33,29 @@ app.use(session({
 // app.use(checkForSession);
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(strategy);
+passport.use(new Auth0Strategy({
+    domain:       domain,
+    clientID:     clientID,
+    clientSecret: clientSecret,
+    callbackURL:  '/api/auth/setUser'
+   },
+   function(accessToken, refreshToken, extraParams, profile, done) {
+     const dbInstance = app.get('db');
+     dbInstance.read_user([ profile.user_id ])
+       .then(user => {
+         if(user) {
+           return done( null, { id: user_id });
+         } else {
+           dbInstance.create_user([profile.user_id, 'https://robohash.org/me'])
+             .then(user => {
+               return done(null, { id: user_id });
+             })
+         } 
+       })
+ 
+           console.log(profile);
+           done(null, profile);
+   }));
 
 
 
@@ -64,7 +90,7 @@ app.get( '/api/auth/login',
 }));
 
 app.get('/api/auth/setUser', passport.authenticate('auth0'), (req,res) => {
-    console.log(req.session.passport.user);//this gives me what was set on the middleware for user and id
+    console.log('Passport User: ',req.session.passport.user);//this gives me what was set on the middleware for user and id
     res.redirect('http://localhost:3000/dashboard')//this works
 });
 
@@ -84,3 +110,18 @@ app.post('/api/friend/remove', friendsController.removeFriends);
 
 
 app.listen(port, console.log(`All the homies are on port ${port}`));
+
+// CREATE TABLE Users (
+//     ID INTEGER PRIMARY KEY,
+//     UserID TEXT,
+//     Picture TEXT,
+//     FirstName TEXT,
+//     LastName TEXT,
+//     Gender TEXT,
+//     HairColor TEXT,
+//     EyeColor TEXT,
+//     Hobby TEXT,
+//     BirthdayDay INTEGER,
+//     BirthdayMonth TEXT,
+//     BirthdayYear INTEGER
+// );

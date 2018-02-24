@@ -9,20 +9,19 @@ module.exports = new Auth0Strategy({
    callbackURL:  '/api/auth/setUser'
   },
   function(accessToken, refreshToken, extraParams, profile, done) {
-//     db.getUserByAuthId([profile.id], (err, user) => {
-//       user = user[0];
-//       if(!user) {
-//         console.log('CREATING USER');
-//         db.createUserByAuth([profile.displayName, profile.id], (err, user) => {
-//           console.log('USER CREATED', user);
-//           return done(err, user[0]);
-//         });
-//       } else {
-//         console.log('FOUND USER', user);
-//         return done(err, user);
-//       }
-//     }
+    const db = app.get('db');
+    db.read_user([ profile.user_id ])
+      .then(user => {
+        if(user[0]) {
+          return done( null, { id: user_id });
+        } else {
+          db.create_user([profile.user_id, 'https://robohash.org/me'])
+            .then(user => {
+              return done(null, { id: user_id });
+            })
+        }
+      })
 
-// )
-      done(null, profile);
+          console.log(profile);
+          done(null, profile);
   });
